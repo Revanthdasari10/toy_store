@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Toy Store</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fdf6f0; }
+    header { background: #ff6f61; color: white; padding: 20px; text-align: center; }
+    h1 { margin: 0; }
+    .filter-bar { display: flex; justify-content: center; gap: 10px; margin: 20px; flex-wrap: wrap; }
+    .filter-bar select, .filter-bar input { padding: 10px; border-radius: 5px; border: 1px solid #ccc; }
+    .toy-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px; }
+    .toy-card { background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 15px; text-align: center; }
+    .toy-card img { max-width: 100%; height: 150px; object-fit: cover; border-radius: 8px; }
+    .toy-card h3 { margin: 10px 0 5px; }
+    .toy-card p { margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome to Happy Toys</h1>
+    <p>Explore a variety of toys by size and price</p>
+  </header>
+
+  <div class="filter-bar">
+    <input type="text" id="searchInput" placeholder="Search toys...">
+    <select id="sizeFilter">
+      <option value="All">All Sizes</option>
+      <option value="Small">Small</option>
+      <option value="Medium">Medium</option>
+      <option value="Large">Large</option>
+    </select>
+    <select id="priceFilter">
+      <option value="All">All Prices</option>
+      <option value="Low">Below $20</option>
+      <option value="Mid">$20 - $50</option>
+      <option value="High">Above $50</option>
+    </select>
+  </div>
+
+  <div class="toy-container" id="toyContainer"></div>
+
+  <script>
+    const toys = [
+      { name: "Rubber Duck", size: "Small", price: 5, image: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2" },
+      { name: "Lego Set", size: "Medium", price: 35, image: "https://images.unsplash.com/photo-1610044969868-1cc7307d9e2a" },
+      { name: "Teddy Bear", size: "Large", price: 60, image: "https://images.unsplash.com/photo-1607902199423-e23d678f4ddb" },
+      { name: "Toy Car", size: "Small", price: 15, image: "https://images.unsplash.com/photo-1618831236348-b681dd3241c6" },
+      { name: "Action Figure", size: "Medium", price: 25, image: "https://images.unsplash.com/photo-1597930605646-9e15ce3a8e7d" },
+      { name: "Dollhouse", size: "Large", price: 80, image: "https://images.unsplash.com/photo-1592890289429-cd206a0f5d9f" },
+    ];
+
+    const toyContainer = document.getElementById('toyContainer');
+    const sizeFilter = document.getElementById('sizeFilter');
+    const priceFilter = document.getElementById('priceFilter');
+    const searchInput = document.getElementById('searchInput');
+
+    function displayToys() {
+      const size = sizeFilter.value;
+      const price = priceFilter.value;
+      const search = searchInput.value.toLowerCase();
+
+      toyContainer.innerHTML = '';
+
+      const filteredToys = toys.filter(toy => {
+        const matchSize = size === 'All' || toy.size === size;
+        const matchSearch = toy.name.toLowerCase().includes(search);
+        const matchPrice =
+          price === 'All' ||
+          (price === 'Low' && toy.price < 20) ||
+          (price === 'Mid' && toy.price >= 20 && toy.price <= 50) ||
+          (price === 'High' && toy.price > 50);
+
+        return matchSize && matchPrice && matchSearch;
+      });
+
+      filteredToys.forEach(toy => {
+        const card = document.createElement('div');
+        card.className = 'toy-card';
+        card.innerHTML = `
+          <img src="${toy.image}" alt="${toy.name}" />
+          <h3>${toy.name}</h3>
+          <p>Size: ${toy.size}</p>
+          <p>Price: $${toy.price}</p>
+        `;
+        toyContainer.appendChild(card);
+      });
+    }
+
+    sizeFilter.addEventListener('change', displayToys);
+    priceFilter.addEventListener('change', displayToys);
+    searchInput.addEventListener('input', displayToys);
+
+    // Initial load
+    displayToys();
+  </script>
+</body>
+</html>
